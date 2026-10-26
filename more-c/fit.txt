@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#define MAX_ALUMNOS 40
+#define MIN_ALUMNOS 2
+
+int validarCantidadAlumnos() 
+{
+    int cantidad;
+    do {
+        system("cls"); 
+        printf("Ingrese la cantidad de alumnos en el grupo (%d-%d): ", MIN_ALUMNOS, MAX_ALUMNOS);
+        scanf("%d", &cantidad);
+
+        if (cantidad < MIN_ALUMNOS || cantidad > MAX_ALUMNOS) {
+            printf("Error: La cantidad de alumnos no es valida. Intente nuevamente.\n");
+            system("pause");  
+        }
+    } while (cantidad < MIN_ALUMNOS || cantidad > MAX_ALUMNOS);
+
+    return cantidad;
+}
+
+
+float validarNota() 
+{
+    float nota;
+    do {
+        system("cls");  
+        printf("Ingrese la nota del alumno (0-100): ");
+        scanf("%f", &nota);
+
+        if (nota < 0 || nota > 100) {
+            printf("Error: La nota no es valida. Intente nuevamente.\n");
+            system("pause"); 
+        }
+    } while (nota < 0 || nota > 100);
+
+    return nota;
+}
+
+int main()
+{
+    int cantidadAlumnos, aprobados = 0, reprobados = 0;
+    float sumaNotas = 0;
+    char nombre[50];
+    float nota;
+    int i;
+    float promedio;
+
+    FILE *archivo;
+    archivo = fopen("C:\\TC20\\BIN\\archivos\\tex.txt", "w");
+    cantidadAlumnos = validarCantidadAlumnos();
+
+    fprintf(archivo, "Reporte de Notas\n\n");
+
+    for (i = 0; i < cantidadAlumnos; ++i) {
+        system("cls");
+        printf("Ingrese el nombre del alumno %d: ", i + 1);
+        scanf("%s", nombre);
+
+        nota = validarNota();
+        sumaNotas += nota;
+
+        fprintf(archivo, "Alumno: %s - Nota: %.2f\n", nombre, nota);
+
+        if (nota >= 60) {
+            aprobados++;
+        } else {
+            reprobados++;
+        }
+    }
+
+    
+    promedio = sumaNotas / cantidadAlumnos;
+
+    system("cls");
+    printf("\nReporte Final:\n");
+    printf("Aprobados: %d\n", aprobados);
+    printf("Reprobados: %d\n", reprobados);
+    printf("Promedio del grupo: %.2f\n", promedio);
+
+    fprintf(archivo, "\nEstadisticas Finales:\n");
+    fprintf(archivo, "Aprobados: %d\n", aprobados);
+    fprintf(archivo, "Reprobados: %d\n", reprobados);
+    fprintf(archivo, "Promedio del grupo: %.2f\n", promedio);
+
+    fclose(archivo);
+
+    system("pause");
+
+    return 0;
+}

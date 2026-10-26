@@ -1,0 +1,861 @@
+cajero actual
+/*Librerias incluidas*/
+#include <stdio.h>
+#include <string.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <dos.h>
+#include <ctype.h>
+float saldo = 0;
+int esLetra(char c)
+{
+    return isalpha(c);
+}
+
+enum TipoCaracter
+{
+    ES_LETRA,
+    ES_NUMERO,
+    NO_ES_LETRA_NI_NUMERO
+};
+
+enum TipoCaracter validarCaracter(char caracter)
+{
+    if (isalpha(caracter) != 0)
+    {
+        return ES_LETRA;
+    }
+    else if (isdigit(caracter) != 0)
+    {
+        return ES_NUMERO;
+    }
+    else
+    {
+        return NO_ES_LETRA_NI_NUMERO;
+    }
+}
+
+void gotoxy(int, int);
+void login();
+void menu();
+void titulo();
+void titulo2();
+void titulo3();
+void tituloatm();
+void titulorecarga();
+void gotoxy(int x, int y);
+void dibujarLogo();
+void Presentacion();
+void centrartexto(char *, int);
+
+int main()
+{
+    login();
+    dibujarLogo();
+    return 0;
+}
+
+void login()
+{
+    char usuario[30] = "Admin";
+    char contra[30] = "12345";
+    char usu[30], con[30];
+    int intentos = 0, i;
+    char caracter;
+    fflush(stdin);
+
+    do
+    {
+        intentos++;
+        i = 0;
+        clrscr();
+        titulo();
+        gotoxy(3, 5);
+        cprintf("Usuario:  ");
+        gets(usu);
+        gotoxy(3, 7);
+        cprintf("Contrasena:   ");
+        while (caracter = getch())
+        {
+            if (caracter == 13)
+            {
+                con[i] = '\0';
+                break;
+            }
+
+            else if (caracter == 8)
+            {
+                if (i > 0)
+                {
+                    i--;
+                    printf("\b \b");
+                }
+            }
+
+            else
+            {
+                printf("*");
+                con[i] = caracter;
+                i++;
+            }
+        }
+
+        centrartexto("CARGANDO...", 21);
+
+        for (i = 3; i <= 76; i++)
+        {
+            gotoxy(i, 23);
+            cprintf("%c", 177);textcolor(7);
+        }
+        for (i = 3; i <= 76; i++)
+        {
+            gotoxy(i, 23);
+            cprintf("%c", 219);textcolor(4);
+            delay(30);
+        }
+        gotoxy(3, 21);
+        printf("                                                                             ");
+        gotoxy(3, 23);
+        printf("                                                                             ");
+
+        if (strcmp(usuario, usu) == 0 && strcmp(contra, con) == 0)
+        {
+            gotoxy(3, 22);
+            cprintf("Los datos ingresados son correctos!");
+            gotoxy(3, 23);
+            system("pause");
+            menu();
+        }
+
+        else if (intentos == 3)
+        {
+            gotoxy(3, 22);
+            cprintf("Datos incorrectos! Ha excedido el numero de intentos!");textcolor(4);
+            gotoxy(3, 23);
+            system("pause");
+            exit(0);
+        }
+
+        else
+        {
+            gotoxy(3, 22);
+           cprintf("Datos incorrectos! Intetelo de nuevo."); textcolor(4+128);
+            gotoxy(3, 23);
+            system("pause");
+        }
+    } while (intentos != 3);
+}
+
+/*Función para mostrar la presentación*/
+void Presentacion()
+{
+    clrscr();
+    titulo2();
+    dibujarLogo();
+    printf("\n\n");
+    printf("\n\n");
+    printf("\n\n");
+    printf("\n\n");
+    printf("Universidad:          Universidad Nacional de Ingenieria\n");
+    printf("Carrera: Ing. de Computacion\n");
+    printf("Nombre: [Tu Nombre]\n");
+    printf("Carnet: [Tu Carnet]\n");
+    printf("Grupo: [Tu Grupo]\n");
+    printf("Profesor: [Nombre del Profesor]\n");
+    printf("Fecha: [Fecha del Trabajo]\n");
+    getch();
+    menu();
+}
+
+/*Función para realizar operaciones en el Cajero ATM - UNI*/
+void cajeroATM()
+{
+    
+    int opcion,i;
+    float cantidad;
+    clrscr();
+    do
+    {
+        tituloatm();
+        printf("\n\n");
+        printf("\n\n");
+        cprintf(" 1. Ingresar Saldo en cuenta\n");textcolor(15);
+        printf("\n\n");
+        cprintf(" 2. Retirar saldo de cuenta\n");textcolor(15);
+        printf("\n\n");
+        cprintf(" 3. Consultar saldo de cuenta\n");textcolor(15);
+        printf("\n\n");
+        cprintf(" 4. Volver al Menu Principal\n");textcolor(15);
+        printf("\n\n");
+        cprintf("     Ingrese su opcion: ");textcolor(15);
+        scanf("%d", &opcion);
+        switch (opcion)
+        {
+        case 1:
+            clrscr();
+            cprintf("Ingrese la cantidad a ingresar: ");textcolor(15);
+            scanf("%f", &cantidad);
+
+            if (cantidad < 0 || cantidad > 10000)
+            {
+                cprintf("Cantidad no valida. Debe ser mayor que 0 y menor o igual a 10,000.\n");textcolor(15);
+            }
+            else
+            {
+                saldo += cantidad;
+                cprintf("Saldo actual: %.2f\n", saldo);textcolor(15);
+            }
+            getch();
+            clrscr();
+            break;
+        case 2:
+            clrscr();
+            cprintf("Ingrese la cantidad a retirar: ");textcolor(15);
+            scanf("%f", &cantidad);
+            if (cantidad < 0 || cantidad > saldo)
+            {
+                cprintf("Cantidad no valida. Debe ser mayor que 0 y menor o igual al saldo actual.\n");textcolor(15);
+            }
+            else
+            {
+                saldo -= cantidad;
+                cprintf("Saldo actual: %.2f\n", saldo);textcolor(15);
+            }
+            getch();
+            clrscr();
+            break;
+        case 3:
+            clrscr();
+            cprintf("Saldo actual: %.2f\n", saldo);textcolor(15);
+            getch();
+            clrscr();
+            break;
+        case 4:
+            centrartexto("Saliendo de la opcion cajero", 21);textcolor(15);
+        
+            for (i = 3; i <= 76; i++)
+            {
+                gotoxy(i, 23);
+                cprintf("%c", 177);textcolor(4);
+            }
+            for (i = 3; i <= 76; i++)
+            {
+                gotoxy(i, 23);
+                cprintf("%c", 219);textcolor(7);
+                delay(30);
+            }
+            menu();
+            break;
+        default:
+            cprintf("Opcion no valida. Por favor, ingrese una opcion valida.\n");textcolor(15);
+            getch();
+            clrscr();
+        }
+    } while (opcion != 4);
+}
+
+/*Funcion de  recarga*/
+void recarga()
+{
+    int operador;
+    char numero[9];
+    float cantidad;
+   
+    int i;
+    clrscr();
+    titulorecarga();
+    printf("\n\n");
+    cprintf(" 1. TIGO\n");  textcolor(15);
+    cprintf(" 2. CLARO\n"); textcolor(15);
+    cprintf(" 3. Salir\n"); textcolor(15);
+    cprintf(" Ingrese su opcion: ");textcolor(15);
+    scanf("%d", &operador);
+
+    switch (operador)
+    {
+    case 1:
+        cprintf("Ha seleccionado TIGO.\n");textcolor(15);
+        break;
+    case 2:
+        cprintf("Ha seleccionado CLARO.\n");textcolor(15);
+        break;
+    case 3:
+        centrartexto("Saliendo de la opcion de recarga", 21);
+        
+        for (i = 3; i <= 76; i++)
+        {
+            gotoxy(i, 23);
+            printf("%c", 177);
+        }
+        for (i = 3; i <= 76; i++)
+        {
+            gotoxy(i, 23);
+            printf("%c", 219);
+            delay(30);
+        }
+        menu();
+        return;
+    default:
+        cprintf("Opcion no valida. Debe ser 1 para TIGO, 2 para CLARO o 3 para salir.\n");textcolor(15);
+        getch();
+        recarga();
+        return;
+    }
+
+    cprintf("Ingrese el numero telefonico (8 digitos): ");textcolor(15);
+    fflush(stdin);
+    /* Limpia el búfer de entrada para evitar problemas */
+    scanf("%8s", numero);
+
+    /* Validar cada carácter del número de teléfono utilizando esLetra */
+    for (i = 0; i < 8; i++)
+    {
+        if (esLetra(numero[i]))
+        {
+            cprintf("Numero de telefono no valido. Debe contener solo numeros.\n");textcolor(15);
+            cprintf("Ingrese el numero telefonico (8 digitos): ");textcolor(15);
+            fflush(stdin);
+            /* Limpia el búfer de entrada nuevamente */
+            scanf("%8s", numero);
+            i = -1;
+            /* Reiniciar el bucle para volver a validar desde el principio */
+        }
+    }
+
+    cprintf("Ingrese la cantidad a recargar: ");textcolor(15);
+    scanf("%f", &cantidad);
+
+    if (cantidad < 0 || cantidad > saldo)
+    {
+        cprintf("Cantidad no valida. Debe ser mayor que 0 y menor o igual al saldo actual.\n");textcolor(15);
+        getch();
+        recarga();
+        return;
+        /* Salir de la función si la cantidad no es válida */
+    }
+    else
+    {
+        saldo -= cantidad;
+        cprintf("Saldo actual: %.2f\n", saldo);textcolor(15);
+        getch();
+        recarga();
+    }
+    getch();
+}
+
+/*Funcion del menu*/
+void menu()
+{
+    int op;
+    clrscr();
+    do
+    {
+        
+        titulo3();
+        printf("\n\n");
+        printf("\n\n");
+        cprintf("1. Presentacion\n");textcolor(15);
+        printf("\n\n");
+        cprintf("2. Cajero ATM - UNI\n");textcolor(15);
+        printf("\n\n");
+        cprintf("3. Recarga\n");textcolor(15);
+        printf("\n\n");
+        cprintf("4. Cerrar Sesion\n");textcolor(15);
+        printf("\n\n");
+        cprintf("5. Salir del Programa\n\n");textcolor(15);
+        printf("\n\n");
+       cprintf("Ingrese una opcion: ");textcolor(15);
+        scanf("%d", &op);
+    } while (op < 1 || op > 8);
+
+    switch (op)
+    {
+    case 1:
+        Presentacion();
+        break;
+
+    case 2:
+        cajeroATM();
+        break;
+
+    case 3:
+        recarga();
+        break;
+
+    case 4:
+        login();
+        break;
+
+    case 5:
+        exit(0);
+        break;
+    }
+}
+
+/*Funcion que me da el cuadro de los titulos*/
+void recuadro(int x, int y, int xi, int yi)
+{
+    int z;
+    for (z = x; z <= xi; z++)
+    {
+        gotoxy(z, y);
+        printf("%c", 196);
+        gotoxy(z, yi);
+        printf("%c", 196);
+    }
+
+    for (z = y; z <= yi; z++)
+    {
+        gotoxy(x, z);
+        printf("%c", 179);
+        gotoxy(xi, z);
+        printf("%c", 179);
+    }
+    gotoxy(x, y);
+    printf("%c", 218);
+    gotoxy(xi, yi);
+    printf("%c", 217);
+    gotoxy(xi, y);
+    printf("%c", 191);
+    gotoxy(x, yi);
+    printf("%c", 192);
+}
+
+/*Funcion que me permite poner el cargando en el centro de la pantalla*/
+void centrartexto(char *texto, int y)
+{
+    int longitud = strlen(texto);
+    gotoxy(40 - (longitud / 2), y);
+    printf(texto);
+}
+
+/*Funciones que me permiten meter en el recuadro los titulo de cada ventana*/
+void titulo()
+{
+    recuadro(1, 1, 78, 3);
+    centrartexto("INICIO DE SESION", 2);textcolor(15);
+    
+}
+void titulo2()
+{
+    recuadro(1, 1, 78, 3);
+    centrartexto("Presentacion del trabajo", 2);textcolor(15);
+}
+void titulo3()
+{
+    recuadro(1, 1, 78, 3);
+    centrartexto("MENU PRINCIPAL", 2);textcolor(15);
+}
+void tituloatm()
+{
+    recuadro(1, 1, 78, 3);
+    centrartexto("Cajero ATM - UNI", 2);textcolor(15);
+
+}
+void titulorecarga()
+{
+    recuadro(1, 1, 78, 3);
+    centrartexto("R e c a r g a", 2);textcolor(15);
+}
+/*Acatermina las funciones de titulos*/
+
+/*Funcion que me deja dibujar el logo en la presentacion*/
+void dibujarLogo()
+{
+    int x, y;
+
+    for (y = 5; y <= 10; y++)
+    {
+        gotoxy(18, y);
+        textcolor(BLUE);
+        cprintf("%c%c%c%c%c%c%c", 219, 219, 219, 219, 219, 219, 219);
+        delay(100);
+    }
+
+    for (x = 18; x <= 35; x++)
+    {
+        gotoxy(x, 11);
+        cprintf("%c", 219);
+        gotoxy(x, 12);
+        cprintf("%c", 219);
+        gotoxy(x, 13);
+        cprintf("%c", 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+
+    for (y = 13; y >= 8; y--)
+    {
+        gotoxy(35, y);
+        cprintf("%c%c%c%c%c", 219, 219, 219, 219, 219, 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+
+    for (y = 7; y <= 9; y++)
+    {
+        gotoxy(27, y);
+        cprintf("%c%c%c%c%c%c", 219, 219, 219, 219, 219, 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+
+    for (x = 27; x <= 47; x++)
+    {
+        gotoxy(x, 5);
+        cprintf("%c", 219);
+        gotoxy(x, 6);
+        cprintf("%c", 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+
+    for (y = 5; y <= 13; y++)
+    {
+        gotoxy(42, y);
+        cprintf("%c%c%c%c%c%c", 219, 219, 219, 219, 219, 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+
+    for (x = 42; x <= 52; x++)
+    {
+        gotoxy(x, 11);
+        cprintf("%c", 219);
+        gotoxy(x, 12);
+        cprintf("%c", 219);
+        gotoxy(x, 13);
+        cprintf("%c", 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+
+    for (y = 13; y >= 8; y--)
+    {
+        gotoxy(50, y);
+        cprintf("%c%c%c%c%c%c", 219, 219, 219, 219, 219, 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+
+    for (x = 50; x <= 55; x++)
+    {
+        gotoxy(x, 5);
+        cprintf("%c", 219);
+        gotoxy(x, 6);
+        cprintf("%c", 219);
+        gotoxy(x, 6);
+        cprintf("%c", 219);
+        delay(100);
+        textcolor(BLUE);
+    }
+}
+/*Errores a solucionar*/
+/*1. no me almacena correctamente la variable saldo*/
+/*2. cuando entro a presentacion todo se pinta de azul*/
+/*3. validacion de letras*/
+/*4. declarar en funcion recargas que no se puede recargar al ingrsar 8(0) )*/
+/*5. solucionar las recargas flotantesS*/
+
+
+
+/////////////////////////////////////////////////////////****
+****************************************************
+
+//////////////////////////////////////////////////////////**
+****************************************************
+#include <stdio.h>
+#include <string.h>
+#include <conio.h>
+
+
+int validarCredenciales()
+{
+    
+    char usuarioCorrecto[] = "u";       
+    char contrasenaCorrecta[] = "c"; 
+    char usuario[50];
+    char contrasena[50];
+    int intentos = 3;
+    clrscr();
+
+    do
+    {
+        printf("Ingrese su usuario: ");
+        scanf("%s", usuario);
+        printf("Ingrese su contraseña: ");
+        scanf("%s", contrasena);
+        clrscr();
+
+        if (strcmp(usuario, usuarioCorrecto) == 0 && strcmp(contrasena, contrasenaCorrecta) == 0)
+        {
+            return 1;
+        }
+        else
+        {
+            intentos--;
+            if (intentos > 0)
+            {
+                printf("Credenciales incorrectas. Tiene %d intentos restantes.\n", intentos);
+            }
+            else
+            {
+                printf("Ha agotado sus intentos. Saliendo del programa.\n");
+                return 0;
+            }
+        }
+    } while (intentos > 0);
+
+    return 0; /*Agotó los intentos*/
+}
+
+/*Función para mostrar el menú principal*/
+int mostrarMenuPrincipal()
+{
+    int opcion;
+
+    printf("\n\nMenú Principal\n");
+    printf("1. Presentación\n");
+    printf("2. Cajero ATM - UNI\n");
+    printf("3. Recarga\n");
+    printf("4. Salir\n");
+    printf("Ingrese su opción: ");
+    scanf("%d", &opcion);
+
+    return opcion;
+}
+
+/*Función para mostrar la presentación*/
+void mostrarPresentacion()
+{
+    printf("\nPresentación del trabajo:\n");
+    printf("Universidad: Universidad Nacional de Ingeniería\n");
+    printf("Carrera: Ing. de Sistemas\n");
+    printf("Nombre: [Tu Nombre]\n");
+    printf("Carnet: [Tu Carnet]\n");
+    printf("Grupo: [Tu Grupo]\n");
+    printf("Profesor: [Nombre del Profesor]\n");
+    printf("Fecha: [Fecha del Trabajo]\n");
+}
+
+/*Función para realizar operaciones en el Cajero ATM - UNI*/
+void cajeroATM()
+{
+    /*Definir variables para el saldo y las operaciones del cajero*/
+    float saldo = 0;
+    int opcion;
+    float cantidad;
+
+    do
+    {
+        printf("\n\nCajero ATM - UNI\n");
+        printf("1. Ingresar Saldo en cuenta\n");
+        printf("2. Retirar saldo de cuenta\n");
+        printf("3. Consultar saldo de cuenta\n");
+        printf("4. Volver al Menú Principal\n");
+        printf("Ingrese su opción: ");
+        scanf("%d", &opcion);
+
+        switch (opcion)
+        {
+        case 1:
+            printf("Ingrese la cantidad a ingresar: ");
+            scanf("%f", &cantidad);
+            if (cantidad < 0 || cantidad > 10000)
+            {
+                printf("Cantidad no válida. Debe ser mayor que 0 y menor o igual a 10,000.\n");
+            }
+            else
+            {
+                saldo += cantidad;
+                printf("Saldo actual: %.2f\n", saldo);
+            }
+            break;
+        case 2:
+            printf("Ingrese la cantidad a retirar: ");
+            scanf("%f", &cantidad);
+            if (cantidad < 0 || cantidad > saldo)
+            {
+                printf("Cantidad no válida. Debe ser mayor que 0 y menor o igual al saldo actual.\n");
+            }
+            else
+            {
+                saldo -= cantidad;
+                printf("Saldo actual: %.2f\n", saldo);
+            }
+            break;
+        case 3:
+            printf("Saldo actual: %.2f\n", saldo);
+            break;
+        case 4:
+            break;
+        default:
+            printf("Opción no válida. Por favor, ingrese una opción válida.\n");
+        }
+    } while (opcion != 4);
+}
+
+/*Función para realizar recargas*/
+void recargarSaldo()
+{
+    int operador;
+    char numero[9];
+    float cantidad, saldo =0;
+
+    printf("\n\nRecarga\n");
+    printf("1. TIGO\n");
+    printf("2. CLARO\n");
+    printf("Ingrese el operador (1 para TIGO, 2 para CLARO): ");
+    scanf("%d", &operador);
+
+    if (operador != 1 && operador != 2)
+    {
+        printf("Operador no válido. Debe ser 1 para TIGO o 2 para CLARO.\n");
+        return;
+    }
+
+    printf("Ingrese el número telefónico (8 dígitos): ");
+    scanf("%s", numero);
+
+    if (strlen(numero) != 8)
+    {
+        printf("Número no válido. Debe tener 8 dígitos.\n");
+        return;
+    }
+
+    printf("Ingrese la cantidad a recargar: ");
+    scanf("%f", &cantidad);
+
+    if (cantidad < 0 || cantidad > saldo)
+    {
+        printf("Cantidad no válida. Debe ser mayor que 0 y menor o igual al saldo actual.\n");
+    }
+    else
+    {
+        saldo -= cantidad;
+        printf("Saldo actual: %.2f\n", saldo);
+    }
+}
+
+int main()
+{
+    
+    int opcion;
+    char otraTransaccion;
+    int autenticado = validarCredenciales();
+
+    if (!autenticado)
+    {
+        return 0; /*Salir si no está autenticado*/
+    }
+
+
+    do
+    {
+        opcion = mostrarMenuPrincipal();
+
+        switch (opcion)
+        {
+        case 1:
+            mostrarPresentacion();
+            break;
+        case 2:
+            cajeroATM();
+            break;
+        case 3:
+            recargarSaldo();
+            break;
+        case 4:
+            printf("\nSaliendo del programa.\n");
+            break;
+        default:
+            printf("\nOpción no válida. Por favor, ingrese una opción válida.\n");
+        }
+
+        printf("\n¿Desea realizar otra transacción? (S/N): ");
+        scanf(" %c", &otraTransaccion);
+    } while (otraTransaccion == 'S' || otraTransaccion == 's');
+
+    printf("\nGracias por usar el programa.\n");
+
+    return 0;
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
+/*int main()
+*/
+/*{
+
+    int opcion;
+    char otraTransaccion;
+    int autenticado = validarCredenciales();
+
+    if (!autenticado)
+    {
+        return 0; /*Salir si no está autenticado*/
+    }
+
+    do
+    {
+        opcion = mostrarMenuPrincipal();
+
+        switch (opcion)
+        {
+        case 1:
+            mostrarPresentacion();
+            break;
+        case 2:
+            cajeroATM();
+            break;
+        case 3:
+            recargarSaldo();
+            break;
+        case 4:
+            break;
+        case 5:
+            printf("\nSaliendo del programa.\n");
+            break;
+        default:
+            printf("\nOpción no válida. Por favor, ingrese una opción válida.\n");
+        }
+
+        printf("\n¿Desea realizar otra transacción? (S/N): ");
+        scanf(" %c", &otraTransaccion);
+    } while (otraTransaccion == 'S' || otraTransaccion == 's');
+
+    printf("\nGracias por usar el programa.\n");
+
+    return 0;
+}
+*/
+****************************
+****************************
+***************************
+#include <stdio.h>
+#include <conio.h>
+#include <dos.h>
+int main()
+{
+  int x,i;
+  clrscr();
+  centrarTexto("cargando ...",21);
+  for (i = 3; i <= 76; i++)
+  {
+    gotoxy(i, 23);
+    printf("%c", 177);
+  }
+  
+  for (x = 3; x <= 76; x++)
+  {
+    gotoxy(x, 23);
+    printf("%c", 219);
+    delay(100);
+    textcolor(4);
+
+  }
+  getch();
+}

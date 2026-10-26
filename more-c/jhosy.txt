@@ -1,0 +1,38 @@
+package PracticasGUI;
+
+import java.awt.Font;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+public class VENTANA extends JFrame{
+    
+    //constructor de ventanas
+    public VENTANA (){
+ 
+        this.setTitle("PRIMERA VENTANA");
+        this.setLocationRelativeTo(null);
+        this.setSize(700,500);
+        
+        JLabel Lbltitulo = new JLabel("Datos personales");
+        Lbltitulo.setFont (new Font("Italic",3,30)); 
+        Lbltitulo.setBounds(10, 5, 300, 30);
+        this.add(Lbltitulo);
+        
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        JLabel Nombre = new JLabel("NOMBRE:");
+        Nombre.setBounds(10, 70, 120, 30);
+        this.add(Nombre);
+        
+        JTextField txtnomb = new JTextField();
+        txtnomb.setBounds(150, 70, 120, 30);
+        this.add(txtnomb);
+        
+        
+    }
+    public static void main(String[] args) {
+        VENTANA ventana =new VENTANA();
+        ventana.setVisible(true);
+    }
+}
